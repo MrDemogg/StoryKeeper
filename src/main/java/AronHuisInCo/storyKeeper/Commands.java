@@ -28,7 +28,7 @@ implements CommandExecutor {
 
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (command.getName().equals("storyReload")) {
-            this.plugin.reloadConfig();
+            this.plugin.reload();
             commandSender.sendRichMessage("Перезагружается \ud83d\udea7");
         }
         if (command.getName().equals("msnget") && args.length > 1) {

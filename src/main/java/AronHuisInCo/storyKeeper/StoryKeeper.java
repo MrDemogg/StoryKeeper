@@ -64,12 +64,19 @@ implements Listener {
     private NamespacedKey storyBookKey;
     public String openMissionToken;
     private int MAX_LINES = 14;
+    private String SPLIT_FORMAT = "";
 
-    public void onEnable() {
-        this.saveDefaultConfig();
+    public void reload()
+    {
+        this.reloadConfig();
         this.storyBookKey = new NamespacedKey(this, "storyBook");
         this.openMissionToken = this.getConfig().getString("openToken");
         this.MAX_LINES = this.getConfig().getInt("maxLines");
+        this.SPLIT_FORMAT = this.getConfig().getString("splitFormat");
+    }
+    public void onEnable() {
+        this.saveDefaultConfig();
+        reload();
         if (!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             this.getLogger().warning("PlaceholderAPI not found, disabling plugin");
             Bukkit.getPluginManager().disablePlugin(this);
@@ -298,6 +305,10 @@ implements Listener {
                 }
 
                 currentPage.append(mm.deserialize(line)).append(Component.newline());
+                if (!SPLIT_FORMAT.isEmpty()) {
+                    currentPage.append(mm.deserialize(SPLIT_FORMAT)).append(Component.newline());
+                    currentLineCount++;
+                }
                 currentLineCount++;
             }
         }
