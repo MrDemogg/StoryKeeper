@@ -82,11 +82,10 @@ implements Listener {
         reload();
         if (!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             this.getLogger().warning("PlaceholderAPI not found, disabling plugin");
-            Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
+        else new StoryPlaceholder(this).register();
         Bukkit.getPluginManager().registerEvents(this, this);
-        new StoryPlaceholder(this).register();
         Commands commandsExecutor = new Commands(this);
         Objects.requireNonNull(this.getCommand("storyReload")).setExecutor(commandsExecutor);
         Objects.requireNonNull(this.getCommand("openmission")).setExecutor(commandsExecutor);
