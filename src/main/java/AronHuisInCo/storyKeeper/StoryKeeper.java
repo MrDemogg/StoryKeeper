@@ -137,7 +137,7 @@ implements Listener {
         ItemStack book = new ItemStack(Material.KNOWLEDGE_BOOK);
         ItemMeta meta = book.getItemMeta();
         meta.displayName(Component.text("Дневник", NamedTextColor.GREEN));
-        meta.getPersistentDataContainer().set(this.storyBookKey, PersistentDataType.BOOLEAN, true);
+        meta.getPersistentDataContainer().set(this.storyBookKey, PersistentDataType.BYTE, (byte)1);
         book.setItemMeta(meta);
         player.getInventory().addItem(book);
     }
@@ -156,7 +156,7 @@ implements Listener {
             return;
         }
         PersistentDataContainer c = meta.getPersistentDataContainer();
-        if (!c.has(this.storyBookKey, PersistentDataType.BOOLEAN)) {
+        if (!c.has(this.storyBookKey, PersistentDataType.BYTE)) {
             return;
         }
         e.setCancelled(true);
