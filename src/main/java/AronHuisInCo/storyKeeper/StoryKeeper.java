@@ -65,17 +65,20 @@ implements Listener {
     public String openMissionToken;
     private int MAX_LINES = 14;
     private String SPLIT_FORMAT = "";
+    private PlayerDataConfig playerConfig;
 
     public void reload()
     {
         this.reloadConfig();
-        this.storyBookKey = new NamespacedKey(this, "storyBook");
+        this.playerConfig.reload();
         this.openMissionToken = this.getConfig().getString("openToken");
         this.MAX_LINES = this.getConfig().getInt("maxLines");
         this.SPLIT_FORMAT = this.getConfig().getString("splitFormat");
     }
     public void onEnable() {
         this.saveDefaultConfig();
+        this.playerConfig = new PlayerDataConfig(this);
+        this.storyBookKey = new NamespacedKey(this, "storyBook");
         reload();
         if (!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             this.getLogger().warning("PlaceholderAPI not found, disabling plugin");
@@ -190,16 +193,18 @@ implements Listener {
             }
             grouped.put("Миссии", new ArrayList<>());
 
-            ConfigurationSection playerSec = this.getConfig().getConfigurationSection("players." + player.getName());
-            if (playerSec == null) return;
+            // Заменяем получение данных игрока
+            Set<String> missionKeys = playerConfig.getKeys("players." + player.getName());
+            if (missionKeys.isEmpty()) return;
 
-            for (String missionKey : playerSec.getKeys(false)) {
+            for (String missionKey : missionKeys) {
                 if (!ms.contains(missionKey)) continue;
                 String cat = ms.getString(missionKey + ".category", "Миссии");
                 if (!grouped.containsKey(cat)) grouped.put(cat, new ArrayList<>());
 
                 List<String> titles = new ArrayList<>(ms.getStringList(missionKey + ".titles"));
-                boolean done = this.getConfig().getBoolean("players." + player.getName() + "." + missionKey, false);
+                // Заменяем получение статуса миссии
+                boolean done = playerConfig.getBoolean("players." + player.getName() + "." + missionKey, false);
                 if (done) {
                     titles.replaceAll(s -> "<st>" + s + "</st>");
                 }
@@ -249,12 +254,12 @@ implements Listener {
     }
 
     public String missionGet(String playerName, String missionName) {
-        String v = this.getConfig().getString("players." + playerName + "." + missionName);
+        String v = this.playerConfig.getString("players." + playerName + "." + missionName);
         return v == null ? "no" : v;
     }
 
     public void missionSet(String playerName, String missionName, boolean finished) {
-        this.getConfig().set("players." + playerName + "." + missionName, finished);
+        this.playerConfig.set("players." + playerName + "." + missionName, finished);
         this.saveConfig();
     }
 
